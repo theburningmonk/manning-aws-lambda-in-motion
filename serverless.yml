@@ -1,0 +1,13 @@
+service: big-mouth
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+
+functions:
+  get-index:
+    handler: functions/get-index.handler
+    events:
+      - http:
+          path: /
+          method: get

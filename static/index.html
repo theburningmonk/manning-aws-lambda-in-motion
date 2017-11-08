@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Big Mouth</title>
+    
+    <style>
+      .fullscreenDiv {
+        background-color: #05bafd;
+        width: 100%;
+        height: auto;
+        bottom: 0px;
+        top: 0px;
+        left: 0;
+        position: absolute;        
+      }
+
+      .column-container {
+        padding: 0;
+        margin: 0;        
+        list-style: none;
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        flex-flow: column;
+        justify-content: center;
+      }
+
+      .item {
+        padding: 5px;
+        height: auto;
+        margin-top: 10px;
+        display: flex;
+        flex-flow: row;
+        justify-content: center;
+      }
+
+      input {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 18px;
+      }
+
+      button {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 18px;
+      }
+    </style>
+
+    <script>
+    </script>
+  </head>
+
+  <body>
+    <div class="fullscreenDiv">
+      <ul class="column-container">
+        <li class="item">
+          <img id="logo" src="https://s3.amazonaws.com/theburningmonk.com/manning/big-mouth.png">
+        </li>
+        <li class="item">
+          <input id="theme" type="text" size="50" placeholder="enter a theme, eg. mario"/>
+          <button onclick="search()">Find Restaurants</button>
+        </li>        
+      </ul>
+  </div>
+  </body>
+
+</html>
