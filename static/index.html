@@ -61,15 +61,30 @@
       }
 
       .restaurant {
-        background-color: 00a8f7;
+        background-color: #00a8f7;
+        border-radius: 10px;
         padding: 5px;
         height: auto;
         width: auto;
-        margin: 10px;
+        margin-left: 40px;
+        margin-right: 40px;
+        margin-top: 15px;
+        margin-bottom: 0px;
         display: flex;
-        flex-flow: row;
-        flex-wrap: wrap;
         justify-content: center;
+      }
+
+      .restaurant-name {
+        font-size: 24px;
+        font-family:Arial, Helvetica, sans-serif;
+        color: #ffffff;
+        padding: 10px;
+        margin: 0px;
+      }
+
+      .restaurant-image {
+        padding-top: 0px;
+        margin-top: 0px;
       }
 
       input {
@@ -102,10 +117,10 @@
             <b class="dayOfWeek">{{dayOfWeek}}</b>
             <ul class="row-container">
               {{#restaurants}}
-              <li class="item">
-                <ul class="column-container restaurant">
-                    <li class="item">{{name}}</li>
-                    <li class="item">
+              <li class="restaurant">
+                <ul class="column-container">
+                    <li class="item restaurant-name">{{name}}</li>
+                    <li class="item restaurant-image">
                       <img src="{{image}}">
                     </li>
                 </ul>
