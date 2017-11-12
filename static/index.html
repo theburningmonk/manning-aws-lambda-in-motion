@@ -15,17 +15,39 @@
         position: absolute;        
       }
 
+      .restaurantsDiv {
+        background-color: #ffffff;
+        width: 100%;
+        height: auto;
+      }
+
+      .dayOfWeek {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 32px;
+        padding: 10px;
+        height: auto;
+        display: flex;
+        justify-content: center;
+      }
+
       .column-container {
         padding: 0;
         margin: 0;        
         list-style: none;
-        display: -webkit-box;
-        display: -moz-box;
-        display: -ms-flexbox;
-        display: -webkit-flex;
         display: flex;
         flex-flow: column;
+        flex-wrap: wrap;
         justify-content: center;
+      }
+
+      .row-container {
+        padding: 0;
+        margin: 0;        
+        list-style: none;
+        display: flex;
+        flex-flow: row;
+        flex-wrap: wrap;
+        justify-content: center;    
       }
 
       .item {
@@ -34,6 +56,19 @@
         margin-top: 10px;
         display: flex;
         flex-flow: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .restaurant {
+        background-color: 00a8f7;
+        padding: 5px;
+        height: auto;
+        width: auto;
+        margin: 10px;
+        display: flex;
+        flex-flow: row;
+        flex-wrap: wrap;
         justify-content: center;
       }
 
@@ -48,7 +83,7 @@
       }
     </style>
 
-    <script>
+    <script>      
     </script>
   </head>
 
@@ -61,6 +96,23 @@
         <li class="item">
           <input id="theme" type="text" size="50" placeholder="enter a theme, eg. cartoon"/>
           <button onclick="search()">Find Restaurants</button>
+        </li>
+        <li>
+          <div class="restaurantsDiv column-container">
+            <b class="dayOfWeek">{{dayOfWeek}}</b>
+            <ul class="row-container">
+              {{#restaurants}}
+              <li class="item">
+                <ul class="column-container restaurant">
+                    <li class="item">{{name}}</li>
+                    <li class="item">
+                      <img src="{{image}}">
+                    </li>
+                </ul>
+              </li>
+              {{/restaurants}}
+            </ul> 
+          </div>         
         </li>
       </ul>
   </div>

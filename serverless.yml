@@ -1,8 +1,16 @@
 service: big-mouth
 
+plugins:
+  - serverless-pseudo-parameters
+
 provider:
   name: aws
   runtime: nodejs6.10
+  versionFunctions: false
+  iamRoleStatements:
+    - Effect: Allow
+      Action: dynamodb:scan
+      Resource: arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/restaurants
 
 functions:
   get-index:
@@ -11,3 +19,30 @@ functions:
       - http:
           path: /
           method: get
+    environment:
+      restaurant_api: https://udc0yk3ted.execute-api.us-east-1.amazonaws.com/dev/restaurants
+
+  get-restaurants:
+    handler: functions/get-restaurants.handler
+    events: 
+      - http:
+          path: /restaurants/
+          method: get
+    environment:
+      restaurants_table: restaurants
+
+resources:
+  Resources:
+    restaurantsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: restaurants
+        AttributeDefinitions:
+          - AttributeName: name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: name
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
