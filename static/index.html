@@ -14,17 +14,36 @@
         left: 0;
         position: absolute;        
       }
+      .restaurantsDiv {
+        background-color: #ffffff;
+        width: 100%;
+        height: auto;
+      }
+      .dayOfWeek {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 32px;
+        padding: 10px;
+        height: auto;
+        display: flex;
+        justify-content: center;
+      }
       .column-container {
         padding: 0;
         margin: 0;        
         list-style: none;
-        display: -webkit-box;
-        display: -moz-box;
-        display: -ms-flexbox;
-        display: -webkit-flex;
         display: flex;
         flex-flow: column;
+        flex-wrap: wrap;
         justify-content: center;
+      }
+      .row-container {
+        padding: 0;
+        margin: 0;        
+        list-style: none;
+        display: flex;
+        flex-flow: row;
+        flex-wrap: wrap;
+        justify-content: center;    
       }
       .item {
         padding: 5px;
@@ -32,7 +51,32 @@
         margin-top: 10px;
         display: flex;
         flex-flow: row;
+        flex-wrap: wrap;
         justify-content: center;
+      }
+      .restaurant {
+        background-color: #00a8f7;
+        border-radius: 10px;
+        padding: 5px;
+        height: auto;
+        width: auto;
+        margin-left: 40px;
+        margin-right: 40px;
+        margin-top: 15px;
+        margin-bottom: 0px;
+        display: flex;
+        justify-content: center;
+      }
+      .restaurant-name {
+        font-size: 24px;
+        font-family:Arial, Helvetica, sans-serif;
+        color: #ffffff;
+        padding: 10px;
+        margin: 0px;
+      }
+      .restaurant-image {
+        padding-top: 0px;
+        margin-top: 0px;
       }
       input {
         font-family: Arial, Helvetica, sans-serif;
@@ -44,7 +88,7 @@
       }
     </style>
 
-    <script>
+    <script>      
     </script>
   </head>
 
@@ -57,7 +101,24 @@
         <li class="item">
           <input id="theme" type="text" size="50" placeholder="enter a theme, eg. cartoon"/>
           <button onclick="search()">Find Restaurants</button>
-        </li>        
+        </li>
+        <li>
+          <div class="restaurantsDiv column-container">
+            <b class="dayOfWeek">{{dayOfWeek}}</b>
+            <ul class="row-container">
+              {{#restaurants}}
+              <li class="restaurant">
+                <ul class="column-container">
+                    <li class="item restaurant-name">{{name}}</li>
+                    <li class="item restaurant-image">
+                      <img src="{{image}}">
+                    </li>
+                </ul>
+              </li>
+              {{/restaurants}}
+            </ul> 
+          </div>         
+        </li>
       </ul>
   </div>
   </body>
