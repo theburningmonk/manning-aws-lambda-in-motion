@@ -1,5 +1,5 @@
 {
-    "name": "manning-aws-lambda-operational-patterns-and-practices",
+    "name": "big-mouth",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
@@ -10,14 +10,10 @@
     "license": "ISC",
     "dependencies": {
         "bluebird": "^3.5.1",
-        "co": "^4.6.0",
-        "mustache": "^2.3.0",
-        "superagent": "^3.8.1",
-        "superagent-promise": "^1.1.0"
+        "co": "^4.6.0"
     },
     "devDependencies": {
         "aws-sdk": "^2.149.0",
-        "serverless": "^1.24.1",
         "serverless-pseudo-parameters": "^1.2.5"
     }
 }

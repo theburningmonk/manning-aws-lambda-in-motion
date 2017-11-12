@@ -6,7 +6,6 @@ plugins:
 provider:
   name: aws
   runtime: nodejs6.10
-  versionFunctions: false
   iamRoleStatements:
     - Effect: Allow
       Action: dynamodb:scan
@@ -19,12 +18,10 @@ functions:
       - http:
           path: /
           method: get
-    environment:
-      restaurant_api: https://udc0yk3ted.execute-api.us-east-1.amazonaws.com/dev/restaurants
 
   get-restaurants:
     handler: functions/get-restaurants.handler
-    events: 
+    events:
       - http:
           path: /restaurants/
           method: get
