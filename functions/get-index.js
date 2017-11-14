@@ -5,6 +5,8 @@ const Promise = require("bluebird");
 const fs = Promise.promisifyAll(require("fs"));
 const Mustache = require('mustache');
 const http = require('superagent-promise')(require('superagent'), Promise);
+const aws4 = require('aws4');
+const URL = require('url');
 
 const restaurantsApiRoot = process.env.restaurants_api;
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -20,7 +22,21 @@ function* loadHtml() {
 }
 
 function* getRestaurants() {
-  return (yield http.get(restaurantsApiRoot)).body;
+  let url = URL.parse(restaurantsApiRoot);
+  let opts = {
+    host: url.hostname, 
+    path: url.pathname
+  };
+
+  aws4.sign(opts);
+
+  return (yield http
+    .get(restaurantsApiRoot)
+    .set('Host', opts.headers['Host'])
+    .set('X-Amz-Date', opts.headers['X-Amz-Date'])
+    .set('Authorization', opts.headers['Authorization'])
+    .set('X-Amz-Security-Token', opts.headers['X-Amz-Security-Token'])
+  ).body;
 }
 
 module.exports.handler = co.wrap(function* (event, context, callback) {
