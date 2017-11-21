@@ -11,6 +11,11 @@ const URL = require('url');
 const restaurantsApiRoot = process.env.restaurants_api;
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+const awsRegion = process.env.AWS_REGION;
+const cognitoUserPoolId = process.env.cognito_user_pool_id;
+const cognitoIdentityPoolId = process.env.cognito_identity_pool_id;
+const cognitoClientId = process.env.cognito_client_id;
+
 var html;
 
 function* loadHtml() {
@@ -43,7 +48,15 @@ module.exports.handler = co.wrap(function* (event, context, callback) {
   let template = yield loadHtml();
   let restaurants = yield getRestaurants();
   let dayOfWeek = days[new Date().getDay()];
-  let html = Mustache.render(template, { dayOfWeek, restaurants });
+  let view = { 
+    awsRegion,
+    cognitoUserPoolId,
+    cognitoIdentityPoolId,
+    cognitoClientId,
+    dayOfWeek, 
+    restaurants 
+  };
+  let html = Mustache.render(template, view);    
 
   const response = {
     statusCode: 200,
