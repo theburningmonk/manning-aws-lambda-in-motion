@@ -125,7 +125,6 @@
     <script>
       const AWS_REGION = '{{awsRegion}}';
       const COGNITO_USER_POOL_ID = '{{cognitoUserPoolId}}';
-      const COGNITO_IDENTITY_POOL_ID = '{{cognitoIdentityPoolId}}';
       const CLIENT_ID = '{{cognitoClientId}}';
       const SEARCH_URL = '{{& searchUrl}}';
 
@@ -151,9 +150,6 @@
       function init() {
         AWS.config.region = AWS_REGION;
         AWSCognito.config.region = AWS_REGION;
-        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-          IdentityPoolId: COGNITO_IDENTITY_POOL_ID,
-        });    
 
         var data = { 
           UserPoolId : COGNITO_USER_POOL_ID, 

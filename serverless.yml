@@ -24,7 +24,6 @@ functions:
     environment:
       restaurants_api: https://i3c5h755j0.execute-api.us-east-1.amazonaws.com/dev/restaurants
       cognito_user_pool_id: us-east-1_sf9kewOaS
-      cognito_identity_pool_id: us-east-1:d1bb3e03-0572-4a58-b24f-231e612debc3
       cognito_client_id: 56or28sm2d22u4ovea73s2bpjf
 
   get-restaurants:

@@ -13,7 +13,6 @@ const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 
 
 const awsRegion = process.env.AWS_REGION;
 const cognitoUserPoolId = process.env.cognito_user_pool_id;
-const cognitoIdentityPoolId = process.env.cognito_identity_pool_id;
 const cognitoClientId = process.env.cognito_client_id;
 
 var html;
@@ -51,7 +50,6 @@ module.exports.handler = co.wrap(function* (event, context, callback) {
   let view = { 
     awsRegion,
     cognitoUserPoolId,
-    cognitoIdentityPoolId,
     cognitoClientId,
     dayOfWeek, 
     restaurants,
