@@ -48,13 +48,13 @@
         justify-content: center;
       }
       .row-container {
-        padding: 0;
-        margin: 0;        
+        padding: 5px;
+        margin: 5px;
         list-style: none;
         display: flex;
         flex-flow: row;
         flex-wrap: wrap;
-        justify-content: center;    
+        justify-content: center;
       }
       .item {
         padding: 5px;
@@ -127,12 +127,14 @@
       const COGNITO_USER_POOL_ID = '{{cognitoUserPoolId}}';
       const COGNITO_IDENTITY_POOL_ID = '{{cognitoIdentityPoolId}}';
       const CLIENT_ID = '{{cognitoClientId}}';
+      const SEARCH_URL = '{{& searchUrl}}';
 
       var regDialog, regForm;
       var verifyDialog;
       var regCompleteDialog;
       var signInDialog;
       var userPool, cognitoUser;
+      var idToken;
 
       function toggleSignOut (enable) {
         enable === true ? $('#sign-out').show() : $('#sign-out').hide();
@@ -166,6 +168,9 @@
                 alert(err);
                 return;
             }
+
+            idToken = session.idToken.jwtToken;
+            console.log('idToken: ' + idToken);
             console.log('session validity: ' + session.isValid());
           });
 
@@ -244,7 +249,8 @@
           onSuccess: function (result) {
             console.log('access token : ' + result.getAccessToken().getJwtToken());
             /*Use the idToken for Logins Map when Federating User Pools with Cognito Identity or when passing through an Authorization Header to an API Gateway Authorizer*/
-            console.log('idToken : ' + result.idToken.jwtToken);
+            idToken = result.idToken.jwtToken;
+            console.log('idToken : ' + idToken);
 
             signInDialog.dialog("close");
             toggleRegister(false);
@@ -265,6 +271,40 @@
           toggleSignIn(true);
           toggleSignOut(false);
         }
+      }
+
+      function searchRestaurants() {
+        var theme = $("#theme")[0].value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', SEARCH_URL, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("Authorization", idToken);
+        xhr.send(JSON.stringify({ theme }));
+        
+        xhr.onreadystatechange = function (e) {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            var restaurants = JSON.parse(xhr.responseText);
+            var restaurantsList = $("#restaurantsUl");
+            restaurantsList.empty();
+
+            for (var restaurant of restaurants) {
+              restaurantsList.append(`
+              <li class="restaurant">
+                <ul class="column-container">
+                    <li class="item restaurant-name">${restaurant.name}</li>
+                    <li class="item restaurant-image">
+                      <img src="${restaurant.image}">
+                    </li>
+                </ul>
+              </li>
+              `);
+            }
+
+          } else if (xhr.readyState === 4) {
+            alert(xhr.responseText);
+          }
+        };
       }
 
       $(document).ready(function() {
@@ -364,12 +404,12 @@
         </li>
         <li class="item">
           <input id="theme" type="text" size="50" placeholder="enter a theme, eg. cartoon"/>
-          <button onclick="search()">Find Restaurants</button>
+          <button onclick="searchRestaurants()">Find Restaurants</button>
         </li>
         <li>
           <div class="restaurantsDiv column-container">
             <b class="dayOfWeek">{{dayOfWeek}}</b>
-            <ul class="row-container">
+            <ul id="restaurantsUl" class="row-container">
               {{#restaurants}}
               <li class="restaurant">
                 <ul class="column-container">

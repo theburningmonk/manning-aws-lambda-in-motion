@@ -54,7 +54,8 @@ module.exports.handler = co.wrap(function* (event, context, callback) {
     cognitoIdentityPoolId,
     cognitoClientId,
     dayOfWeek, 
-    restaurants 
+    restaurants,
+    searchUrl: `${restaurantsApiRoot}/search`
   };
   let html = Mustache.render(template, view);    
 
