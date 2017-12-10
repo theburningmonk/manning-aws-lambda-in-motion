@@ -43,8 +43,28 @@
       "request": "launch",
       "name": "integration tests",
       "program": "${workspaceFolder}/node_modules/.bin/mocha",
+      "env": {
+        "TEST_MODE": "handler"
+      },
       "args": [
         "tests/test_cases",
+        "--reporter",
+        "spec"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "acceptance tests",
+      "program": "${workspaceFolder}/node_modules/.bin/mocha",
+      "env": {
+        "TEST_MODE": "http",
+        "TEST_ROOT": "https://i3c5h755j0.execute-api.us-east-1.amazonaws.com/dev/"
+      },
+      "args": [
+        "tests/test_cases",
+        "-t",
+        "2000",
         "--reporter",
         "spec"
       ]

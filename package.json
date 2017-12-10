@@ -4,7 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "integration-test": "./node_modules/.bin/mocha tests/test_cases --reporter spec"
+        "integration-test": "env TEST_MODE=handler ./node_modules/.bin/mocha tests/test_cases --reporter spec",
+        "acceptance-test": "env TEST_MODE=http TEST_ROOT=https://i3c5h755j0.execute-api.us-east-1.amazonaws.com/dev ./node_modules/.bin/mocha tests/test_cases --reporter spec"
     },
     "author": "",
     "license": "ISC",
@@ -17,9 +18,10 @@
         "superagent-promise": "^1.1.0"
     },
     "devDependencies": {
-        "aws-sdk": "^2.149.0",
+        "aws-sdk": "^2.167.0",
         "awscred": "^1.2.0",
         "chai": "^4.1.2",
+        "chance": "^1.0.12",
         "cheerio": "^1.0.0-rc.2",
         "lodash": "^4.17.4",
         "mocha": "^4.0.1",
