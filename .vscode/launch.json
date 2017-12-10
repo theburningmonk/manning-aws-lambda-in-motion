@@ -35,7 +35,27 @@
         "{}"
       ],
       "env": {
-        "restaurant_api": "https://udc0yk3ted.execute-api.us-east-1.amazonaws.com/dev/restaurants"
+        "restaurant_api": "https://i3c5h755j0.execute-api.us-east-1.amazonaws.com/dev/restaurants",
+        "cognito_user_pool_id": "us-east-1_DfuAwa0vB",
+        "cognito_client_id": "1tf8pb1s1n53p7u608e7ic5ih8",
+        "SLS_DEBUG": "*"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "search-restaurants",
+      "program": "${workspaceFolder}/node_modules/.bin/sls",
+      "args": [
+        "invoke",
+        "local",
+        "-f",
+        "search-restaurants",
+        "-d",
+        "{ \"body\": \"{ \\\"theme\\\": \\\"cartoon\\\" }\"}"
+      ],
+      "env": {
+        "restaurant_table": "restaurants"
       }
     },
     {
