@@ -7,7 +7,7 @@ const tearDown = require('../steps/tearDown');
 const given    = require('../steps/given');
 const when     = require('../steps/when');
 
-describe(`Given an authorised user`, co.wrap(function* () {
+describe(`Given an authenticated user`, co.wrap(function* () {
   let user;
 
   before(co.wrap(function* () {
