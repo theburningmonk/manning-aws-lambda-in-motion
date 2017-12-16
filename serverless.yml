@@ -2,6 +2,7 @@ service: big-mouth
 
 plugins:
   - serverless-pseudo-parameters
+  - serverless-sam
 
 provider:
   name: aws

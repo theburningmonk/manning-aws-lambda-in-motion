@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: 'SAM template for Serverless framework service: '
+Resources:
+  restaurantsTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: restaurants
+      AttributeDefinitions:
+        - AttributeName: name
+          AttributeType: S
+      KeySchema:
+        - AttributeName: name
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  GetIndex:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: functions/get-index.handler
+      Runtime: nodejs6.10
+      CodeUri: >-
+        /Users/yancui/SourceCode/Personal/manning-aws-lambda-operational-patterns-and-practices/.serverless/big-mouth.zip
+      MemorySize: 128
+      Timeout: 3
+      Policies:
+        - Effect: Allow
+          Action: 'dynamodb:scan'
+          Resource: 'arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/restaurants'
+      Environment:
+        Variables:
+          restaurants_api: https://i3c5h755j0.execute-api.us-east-1.amazonaws.com/dev/restaurants
+          cognito_user_pool_id: us-east-1_DfuAwa0vB
+          cognito_client_id: 1tf8pb1s1n53p7u608e7ic5ih8
+      Events:
+        Event1:
+          Type: Api
+          Properties:
+            Path: /
+            Method: get
+  GetRestaurants:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: functions/get-restaurants.handler
+      Runtime: nodejs6.10
+      CodeUri: >-
+        /Users/yancui/SourceCode/Personal/manning-aws-lambda-operational-patterns-and-practices/.serverless/big-mouth.zip
+      MemorySize: 128
+      Timeout: 3
+      Policies:
+        - Effect: Allow
+          Action: 'dynamodb:scan'
+          Resource: 'arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/restaurants'
+      Environment:
+        Variables:
+          restaurants_table: restaurants
+      Events:
+        Event1:
+          Type: Api
+          Properties:
+            Path: /restaurants/
+            Method: get
+  Aws_iamResourcePolicy:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName:
+        'Fn::GetAtt':
+          - Aws_iam
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceAccount:
+        Ref: 'AWS::AccountId'
+  SearchRestaurants:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: functions/search-restaurants.handler
+      Runtime: nodejs6.10
+      CodeUri: >-
+        /Users/yancui/SourceCode/Personal/manning-aws-lambda-operational-patterns-and-practices/.serverless/big-mouth.zip
+      MemorySize: 128
+      Timeout: 3
+      Policies:
+        - Effect: Allow
+          Action: 'dynamodb:scan'
+          Resource: 'arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/restaurants'
+      Environment:
+        Variables:
+          restaurants_table: restaurants
+      Events:
+        Event1:
+          Type: Api
+          Properties:
+            Path: /restaurants/search
+            Method: post
