@@ -5,6 +5,15 @@
   "version": "0.2.0",
   "configurations": [  
     {
+      "name": "Attach to SAM Local",
+      "type": "node",
+      "request": "attach",
+      "address": "localhost",
+      "port": 5858,
+      "localRoot": "${workspaceRoot}",
+      "remoteRoot": "/var/task"
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "get-index",
@@ -90,6 +99,6 @@
         "--reporter",
         "spec"
       ]
-    }
+    },
   ]
 }
