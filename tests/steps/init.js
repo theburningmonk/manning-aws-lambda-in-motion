@@ -17,8 +17,6 @@ let init = co.wrap(function* () {
   process.env.cognito_user_pool_id = "us-east-1_DfuAwa0vB";
   process.env.cognito_server_client_id = "niv7esuaibla0tj5q36b6mvnr";
 
-  console.log("AWS credentials loaded");
-
   initialized = true;
 });
 

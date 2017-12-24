@@ -33,6 +33,8 @@ function* getRestaurants() {
     path: url.pathname
   };
   
+  console.log(JSON.stringify(process.env));
+
   if (!process.env.AWS_ACCESS_KEY_ID) {
     console.log("loading AWS credentials");
 
