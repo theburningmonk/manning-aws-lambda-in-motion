@@ -7,7 +7,7 @@ exports.credentialsCallChain = [
   loadCredentialsFromEnv,
   loadCredentialsFromIniFile,
   loadCredentialsFromEc2Metadata,
-  loadCredentialsFromEcsMetadata
+  loadCredentialsFromEcsMetadata,
 ]
 
 exports.regionCallChain = [
@@ -143,6 +143,8 @@ var TIMEOUT_CODES = ['ECONNRESET', 'ETIMEDOUT', 'EHOSTUNREACH', 'Unknown system 
 var ec2Callbacks = []
 
 function loadCredentialsFromEcsMetadata(options, cb) {
+  console.log("loading credentials from ECS");
+
   if (!cb) { cb = options; options = {} }
 
   ec2Callbacks.push(cb)
@@ -170,8 +172,12 @@ function loadCredentialsFromEcsMetadata(options, cb) {
 
       try { data = JSON.parse(data) } catch (e) { }
 
-      if (res.statusCode != 200 || data.Code != 'Success')
+      if (res.statusCode != 200 || data.Code != 'Success') {
+        console.log("failed to load credentials from ECS");
         return cb(new Error('Failed to fetch IAM credentials: ' + res.statusCode + ' ' + data))
+      }
+
+      console.log(data);
 
       cb(null, {
         accessKeyId: data.AccessKeyId,
