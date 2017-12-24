@@ -43,7 +43,9 @@ function* getRestaurants() {
     }
   }
 
-  console.log(JSON.stringify(process.env));
+  console.log("aws key ID:", process.env.AWS_ACCESS_KEY_ID);
+  console.log("aws secret:", process.env.AWS_SECRET_ACCESS_KEY);
+  console.log("aws session token:", process.env.AWS_SESSION_TOKEN);
 
   aws4.sign(opts);
 
