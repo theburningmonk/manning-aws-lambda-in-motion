@@ -173,9 +173,7 @@ function loadCredentialsFromEcsMetadata(options, cb) {
 
     try { data = JSON.parse(data) } catch (e) { }
 
-    console.log(data);
-
-    if (res.statusCode != 200 || data.Code != 'Success') {
+    if (res.statusCode != 200) {
       console.log("failed to load credentials from ECS");
       return cb(new Error('Failed to fetch IAM credentials: ' + res.statusCode + ' ' + data))
     }
