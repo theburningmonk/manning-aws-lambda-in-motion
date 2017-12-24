@@ -7,7 +7,7 @@ const Mustache = require('mustache');
 const http = require('superagent-promise')(require('superagent'), Promise);
 const aws4 = require('aws4');
 const URL = require('url');
-const awscred = Promise.promisifyAll(require('awscred'));
+const awscred = Promise.promisifyAll(require('./awscred'));
 
 const awsRegion = process.env.AWS_REGION;
 const cognitoUserPoolId = process.env.cognito_user_pool_id;
@@ -33,17 +33,16 @@ function* getRestaurants() {
     path: url.pathname
   };
   
-  console.log(JSON.stringify(process.env));
+  // console.log(JSON.stringify(process.env));
 
   if (!process.env.AWS_ACCESS_KEY_ID) {
     console.log("loading AWS credentials");
 
-    let credUrl = `http://169.254.170.2${process.env.AWS_CONTAINER_CREDENTIALS_RELATIVE_URI}`;
-    let credReq = http.get(credUrl);
-    let credResp = (yield credReq);
-    let credBody = credResp.body || credResp.text;
-    console.log("cred body: ", credBody);
-
+    // let credUrl = `http://169.254.170.2${process.env.AWS_CONTAINER_CREDENTIALS_RELATIVE_URI}`;
+    // let credReq = http.get(credUrl);
+    // let credResp = (yield credReq);
+    // let credBody = credResp.body || credResp.text;
+    // console.log("cred body: ", credBody);
 
     let cred = (yield awscred.loadAsync()).credentials;
     console.log(JSON.stringify(cred));
