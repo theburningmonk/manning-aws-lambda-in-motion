@@ -7,7 +7,7 @@ exports.credentialsCallChain = [
   loadCredentialsFromEnv,
   loadCredentialsFromIniFile,
   loadCredentialsFromEc2Metadata,
-  loadCredentialsFromEcsMetadata,
+  loadCredentialsFromEcs,
 ]
 
 exports.regionCallChain = [
@@ -143,9 +143,7 @@ var TIMEOUT_CODES = ['ECONNRESET', 'ETIMEDOUT', 'EHOSTUNREACH', 'Unknown system 
 var ec2Callbacks = []
 var ecsCallbacks = []
 
-function loadCredentialsFromEcsMetadata(options, cb) {
-  console.log("loading credentials from ECS");
-
+function loadCredentialsFromEcs(options, cb) {
   if (!cb) { cb = options; options = {} }
 
   ecsCallbacks.push(cb)
@@ -160,23 +158,17 @@ function loadCredentialsFromEcsMetadata(options, cb) {
   options.host = '169.254.170.2'
   options.path = process.env.AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
 
-  console.log(`requesting ECS cred: ${options.host}${options.path}`);
-
   return request(options, function(err, res, data) {    
     if (err && ~TIMEOUT_CODES.indexOf(err.code)) return cb(null, {})
     if (err) return cb(err)
 
-    if (res.statusCode != 200) {
-      console.log("failed to fetch IAM role");
+    if (res.statusCode != 200)
       return cb(new Error('Failed to fetch IAM role: ' + res.statusCode + ' ' + data))
-    }
 
     try { data = JSON.parse(data) } catch (e) { }
 
-    if (res.statusCode != 200) {
-      console.log("failed to load credentials from ECS");
-      return cb(new Error('Failed to fetch IAM credentials: ' + res.statusCode + ' ' + data))
-    }
+    if (res.statusCode != 200)
+      return cb(new Error('Failed to fetch IAM credentials: ' + res.statusCode + ' ' + data))    
 
     cb(null, {
       accessKeyId: data.AccessKeyId,
