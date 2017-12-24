@@ -34,7 +34,10 @@ function* getRestaurants() {
   };
   
   if (!process.env.AWS_ACCESS_KEY_ID) {
+    console.log("loading AWS credentials");
+
     let cred = (yield awscred.loadAsync()).credentials;
+    console.log(JSON.stringify(cred));
     
     process.env.AWS_ACCESS_KEY_ID = cred.accessKeyId;
     process.env.AWS_SECRET_ACCESS_KEY = cred.secretAccessKey;
