@@ -37,7 +37,6 @@ function* getRestaurants() {
     console.log("loading AWS credentials");
 
     let cred = (yield awscred.loadAsync()).credentials;
-    console.log(JSON.stringify(cred));
     
     process.env.AWS_ACCESS_KEY_ID = cred.accessKeyId;
     process.env.AWS_SECRET_ACCESS_KEY = cred.secretAccessKey;
@@ -45,10 +44,6 @@ function* getRestaurants() {
       process.env.AWS_SESSION_TOKEN = cred.sessionToken;
     }
   }
-
-  console.log("aws key ID:", process.env.AWS_ACCESS_KEY_ID);
-  console.log("aws secret:", process.env.AWS_SECRET_ACCESS_KEY);
-  console.log("aws session token:", process.env.AWS_SESSION_TOKEN);
 
   aws4.sign(opts);
 
@@ -61,8 +56,6 @@ function* getRestaurants() {
   if (opts.headers['X-Amz-Security-Token']) {
     httpReq.set('X-Amz-Security-Token', opts.headers['X-Amz-Security-Token']);
   }
-
-  console.log(JSON.stringify(opts.headers));
 
   return (yield httpReq).body;
 }
