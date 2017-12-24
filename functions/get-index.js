@@ -38,6 +38,13 @@ function* getRestaurants() {
   if (!process.env.AWS_ACCESS_KEY_ID) {
     console.log("loading AWS credentials");
 
+    let credUrl = `http://169.254.170.2${process.env.AWS_CONTAINER_CREDENTIALS_RELATIVE_URI}`;
+    let credReq = http.get(credUrl);
+    let credResp = (yield credReq);
+    let credBody = credResp.body || credResp.text;
+    console.log("cred body: ", credBody);
+
+
     let cred = (yield awscred.loadAsync()).credentials;
     console.log(JSON.stringify(cred));
     
