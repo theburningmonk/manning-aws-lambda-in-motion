@@ -4,8 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "integration-test": "env TEST_MODE=handler ./node_modules/.bin/mocha tests/test_cases --reporter spec --timeout 6000",
-        "acceptance-test": "env TEST_MODE=http TEST_ROOT=https://i3c5h755j0.execute-api.us-east-1.amazonaws.com/dev ./node_modules/.bin/mocha tests/test_cases --reporter spec"
+        "integration-test": "env TEST_MODE=handler ./node_modules/.bin/mocha tests/test_cases --reporter spec --timeout 6000 --retries 3",
+        "acceptance-test": "env TEST_MODE=http TEST_ROOT=https://i3c5h755j0.execute-api.us-east-1.amazonaws.com/dev ./node_modules/.bin/mocha tests/test_cases --reporter spec --timeout 6000 --retries 3"
     },
     "author": "",
     "license": "ISC",
