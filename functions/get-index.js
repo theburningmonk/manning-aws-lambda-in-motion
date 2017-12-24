@@ -43,6 +43,8 @@ function* getRestaurants() {
     }
   }
 
+  console.log(JSON.stringify(process.env));
+
   aws4.sign(opts);
 
   let httpReq = http
@@ -54,6 +56,8 @@ function* getRestaurants() {
   if (opts.headers['X-Amz-Security-Token']) {
     httpReq.set('X-Amz-Security-Token', opts.headers['X-Amz-Security-Token']);
   }
+
+  console.log(JSON.stringify(opts.headers));
 
   return (yield httpReq).body;
 }
