@@ -141,18 +141,19 @@ function loadRegionFromIniFileSync(options) {
 
 var TIMEOUT_CODES = ['ECONNRESET', 'ETIMEDOUT', 'EHOSTUNREACH', 'Unknown system errno 64']
 var ec2Callbacks = []
+var ecsCallbacks = []
 
 function loadCredentialsFromEcsMetadata(options, cb) {
   console.log("loading credentials from ECS");
 
   if (!cb) { cb = options; options = {} }
 
-  ec2Callbacks.push(cb)
-  if (ec2Callbacks.length > 1) return // only want one caller at a time
+  ecsCallbacks.push(cb)
+  if (ecsCallbacks.length > 1) return // only want one caller at a time
 
   cb = function(err, credentials) {
-    ec2Callbacks.forEach(function(cb) { cb(err, credentials) })
-    ec2Callbacks = []
+    ecsCallbacks.forEach(function(cb) { cb(err, credentials) })
+    ecsCallbacks = []
   }
 
   if (options.timeout == null) options.timeout = 5000
@@ -172,12 +173,12 @@ function loadCredentialsFromEcsMetadata(options, cb) {
 
     try { data = JSON.parse(data) } catch (e) { }
 
+    console.log(data);
+
     if (res.statusCode != 200 || data.Code != 'Success') {
       console.log("failed to load credentials from ECS");
       return cb(new Error('Failed to fetch IAM credentials: ' + res.statusCode + ' ' + data))
     }
-
-    console.log(data);
 
     cb(null, {
       accessKeyId: data.AccessKeyId,
