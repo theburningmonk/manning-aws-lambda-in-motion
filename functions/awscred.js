@@ -159,32 +159,31 @@ function loadCredentialsFromEcsMetadata(options, cb) {
   options.host = '169.254.170.2'
   options.path = process.env.AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
 
-  return request(options, function(err, res, data) {
+  console.log(`requesting ECS cred: ${options.host}${options.path}`);
+
+  return request(options, function(err, res, data) {    
     if (err && ~TIMEOUT_CODES.indexOf(err.code)) return cb(null, {})
     if (err) return cb(err)
 
-    if (res.statusCode != 200)
+    if (res.statusCode != 200) {
+      console.log("failed to fetch IAM role");
       return cb(new Error('Failed to fetch IAM role: ' + res.statusCode + ' ' + data))
+    }
 
-    options.path += data.split('\n')[0]
-    request(options, function(err, res, data) {
-      if (err) return cb(err)
+    try { data = JSON.parse(data) } catch (e) { }
 
-      try { data = JSON.parse(data) } catch (e) { }
+    if (res.statusCode != 200 || data.Code != 'Success') {
+      console.log("failed to load credentials from ECS");
+      return cb(new Error('Failed to fetch IAM credentials: ' + res.statusCode + ' ' + data))
+    }
 
-      if (res.statusCode != 200 || data.Code != 'Success') {
-        console.log("failed to load credentials from ECS");
-        return cb(new Error('Failed to fetch IAM credentials: ' + res.statusCode + ' ' + data))
-      }
+    console.log(data);
 
-      console.log(data);
-
-      cb(null, {
-        accessKeyId: data.AccessKeyId,
-        secretAccessKey: data.SecretAccessKey,
-        sessionToken: data.Token,
-        expiration: new Date(data.Expiration),
-      })
+    cb(null, {
+      accessKeyId: data.AccessKeyId,
+      secretAccessKey: data.SecretAccessKey,
+      sessionToken: data.Token,
+      expiration: new Date(data.Expiration),
     })
   })
 }
