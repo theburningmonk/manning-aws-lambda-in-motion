@@ -11,6 +11,7 @@
     "license": "ISC",
     "dependencies": {
         "aws4": "^1.6.0",
+        "awscred": "^1.2.0",
         "bluebird": "^3.5.1",
         "co": "^4.6.0",
         "mustache": "^2.3.0",
@@ -19,7 +20,6 @@
     },
     "devDependencies": {
         "aws-sdk": "^2.167.0",
-        "awscred": "^1.2.0",
         "chai": "^4.1.2",
         "chance": "^1.0.12",
         "cheerio": "^1.0.0-rc.2",
