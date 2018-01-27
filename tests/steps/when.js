@@ -6,7 +6,7 @@ const _       = require('lodash');
 const co      = require('co');
 const Promise = require("bluebird");
 const http    = require('superagent-promise')(require('superagent'), Promise);
-const aws4    = require('aws4');
+const aws4    = require('../../lib/aws4');
 const URL     = require('url');
 const mode    = process.env.TEST_MODE;
 
@@ -46,7 +46,7 @@ let signHttpRequest = (url, httpReq) => {
 let viaHttp = co.wrap(function* (relPath, method, opts) {
   let root = process.env.TEST_ROOT;
   let url = `${root}/${relPath}`;
-  console.log(`invoking via HTTP POST ${url}`);
+  console.log(`invoking via HTTP ${method} ${url}`);
 
   try {
     let httpReq = http(method, url);
@@ -64,7 +64,7 @@ let viaHttp = co.wrap(function* (relPath, method, opts) {
     if (authHeader) {
       httpReq.set('Authorization', authHeader);
     }
-
+    
     let res = yield httpReq;
     return respondFrom(res);
   } catch (err) {
@@ -136,4 +136,4 @@ module.exports = {
   we_invoke_get_index,
   we_invoke_get_restaurants,
   we_invoke_search_restaurants
-}
+};
