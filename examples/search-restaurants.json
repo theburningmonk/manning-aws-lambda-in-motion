@@ -21,6 +21,23 @@
       "sourceIp": "127.0.0.1",
       "accountId": null
     },
+    "authorizer": {
+      "claims": {
+        "sub": "fef3b4c8-cb16-4eb0-9d7c-201ac4cb0905",
+        "email_verified": "true",
+        "iss": "https:\/\/cognito-idp.us-east-1.amazonaws.com\/us-east-1_DfuAwa0vB",
+        "cognito:username": "theburningmonk",
+        "given_name": "Yan",
+        "aud": "1tf8pb1s1n53p7u608e7ic5ih8",
+        "event_id": "e727e68e-1424-11e8-be95-8774da63618a",
+        "token_use": "id",
+        "auth_time": "1518986085",
+        "exp": "Sun Feb 18 21:34:45 UTC 2018",
+        "iat": "Sun Feb 18 20:34:45 UTC 2018",
+        "family_name": "Cui",
+        "email": "theburningmonk@gmail.com"
+      }
+    },
     "stage": "prod"
   },
   "queryStringParameters": {
