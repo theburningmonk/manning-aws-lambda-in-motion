@@ -19,10 +19,11 @@ provider:
       Resource: arn:aws:kinesis:#{AWS::Region}:#{AWS::AccountId}:stream/order-events
     - Effect: Allow
       Action: sns:Publish
-      Resource: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification
-    - Effect: Allow
-      Action: sns:Publish
-      Resource: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:user-notification
+      Resource:
+        - arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification
+        - arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification-retry
+        - arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:user-notification
+        - arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:user-notification-retry
 
 functions:
   get-index:
@@ -32,8 +33,8 @@ functions:
           path: /
           method: get
     environment:
-      restaurants_api: https://i3c5h755j0.execute-api.us-east-1.amazonaws.com/dev/restaurants
-      orders_api: https://i3c5h755j0.execute-api.us-east-1.amazonaws.com/dev/orders
+      restaurants_api: https://ksnkhvytol.execute-api.us-east-1.amazonaws.com/dev/restaurants
+      orders_api: https://ksnkhvytol.execute-api.us-east-1.amazonaws.com/dev/orders
       cognito_user_pool_id: us-east-1_DfuAwa0vB
       cognito_client_id: 1tf8pb1s1n53p7u608e7ic5ih8
 
@@ -77,6 +78,16 @@ functions:
     environment:
       order_events_stream: order-events
       restaurant_notification_topic: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification
+      restaurant_notification_retry_topic: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification-retry
+
+  retry-notify-restaurant:
+    handler: functions/retry-notify-restaurant.handler
+    events:
+      - sns: restaurant-notification-retry
+    environment:
+      order_events_stream: order-events
+      restaurant_notification_topic: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification
+    onError: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification-dlq
     
   accept-order:
     handler: functions/accept-order.handler
@@ -95,6 +106,16 @@ functions:
     environment:
       order_events_stream: order-events
       user_notification_topic: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:user-notification
+      user_notification_retry_topic: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:user-notification-retry
+
+  retry-notify-user:
+    handler: functions/retry-notify-user.handler
+    events:
+      - sns: user-notification-retry
+    environment:
+      order_events_stream: order-events
+      user_notification_topic: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:user-notification
+    onError: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:user-notification-dlq
 
   fulfill-order:
     handler: functions/fulfill-order.handler
@@ -138,3 +159,15 @@ resources:
       Properties: 
         DisplayName: user-notification
         TopicName: user-notification
+
+    restaurantNotificationDLQTopic:
+      Type: AWS::SNS::Topic
+      Properties: 
+        DisplayName: restaurant-notification-dlq
+        TopicName: restaurant-notification-dlq
+
+    userNotificationDLQTopic:
+      Type: AWS::SNS::Topic
+      Properties: 
+        DisplayName: user-notification-dlq
+        TopicName: user-notification-dlq
