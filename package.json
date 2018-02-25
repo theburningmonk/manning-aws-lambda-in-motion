@@ -24,7 +24,7 @@
         "lodash": "^4.17.4",
         "mocha": "^4.0.1",
         "serverless": "^1.24.1",
-        "serverless-iam-roles-per-function": "^0.1.4",
+        "serverless-iam-roles-per-function": "^0.1.5",
         "serverless-pseudo-parameters": "^1.2.5",
         "serverless-sam": "0.0.3"
     }

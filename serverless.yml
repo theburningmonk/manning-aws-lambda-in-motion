@@ -106,7 +106,6 @@ functions:
         Action: sns:Publish
         Resource:
           - arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification
-          - arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:restaurant-notification-dlq
     
   accept-order:
     handler: functions/accept-order.handler
@@ -156,7 +155,6 @@ functions:
         Action: sns:Publish
         Resource:
           - arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:user-notification
-          - arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:user-notification-dlq
 
   fulfill-order:
     handler: functions/fulfill-order.handler
