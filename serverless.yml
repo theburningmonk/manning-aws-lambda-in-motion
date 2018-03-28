@@ -5,9 +5,17 @@ plugins:
   - serverless-sam
   - serverless-iam-roles-per-function
 
+custom: 
+  stage: ${opt:stage, self:provider.stage}
+  logLevel:
+    prod: INFO
+    default: DEBUG
+
 provider:
   name: aws
   runtime: nodejs6.10
+  environment:
+    log_level: ${self:custom.logLevel.${self:custom.stage}, self:custom.logLevel.default}
 
 functions:
   get-index:
@@ -17,8 +25,8 @@ functions:
           path: /
           method: get
     environment:
-      restaurants_api: https://ksnkhvytol.execute-api.us-east-1.amazonaws.com/dev/restaurants
-      orders_api: https://ksnkhvytol.execute-api.us-east-1.amazonaws.com/dev/orders
+      restaurants_api: https://8kbasri6v6.execute-api.us-east-1.amazonaws.com/dev/restaurants
+      orders_api: https://8kbasri6v6.execute-api.us-east-1.amazonaws.com/dev/orders
       cognito_user_pool_id: us-east-1_DfuAwa0vB
       cognito_client_id: 1tf8pb1s1n53p7u608e7ic5ih8
     #iamRoleStatementsInherit: true #optionally inherit shared permissions
