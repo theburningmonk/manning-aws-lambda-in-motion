@@ -6,7 +6,10 @@ const notify     = require('../lib/notify');
 const retry      = require('../lib/retry');
 const log        = require('../lib/log');
 
-module.exports.handler = co.wrap(function* (event, context, cb) {
+const middy         = require('middy');
+const sampleLogging = require('../middleware/sample-logging');
+
+const handler = co.wrap(function* (event, context, cb) {
   let records = getRecords(event);
   let orderPlaced = records.filter(r => r.eventType === 'order_placed');
   log.debug(`found ${orderPlaced.length} 'order_placed' events`);
@@ -28,3 +31,6 @@ module.exports.handler = co.wrap(function* (event, context, cb) {
   
   cb(null, "all done");
 });
+
+module.exports.handler = middy(handler)
+  .use(sampleLogging({ sampleRate: 0.01 }));

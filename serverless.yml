@@ -8,7 +8,7 @@ plugins:
 custom: 
   stage: ${opt:stage, self:provider.stage}
   logLevel:
-    prod: INFO
+    prod: WARN
     default: DEBUG
 
 provider:

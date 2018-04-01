@@ -13,6 +13,7 @@
         "bluebird": "^3.5.1",
         "chance": "^1.0.13",
         "co": "^4.6.0",
+        "middy": "^0.10.8",
         "mustache": "^2.3.0",
         "superagent": "^3.8.1",
         "superagent-promise": "^1.1.0"

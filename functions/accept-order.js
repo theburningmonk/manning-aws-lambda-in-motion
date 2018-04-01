@@ -5,9 +5,12 @@ const AWS        = require('aws-sdk');
 const kinesis    = new AWS.Kinesis();
 const log        = require('../lib/log');
 
+const middy         = require('middy');
+const sampleLogging = require('../middleware/sample-logging');
+
 const streamName = process.env.order_events_stream;
 
-module.exports.handler = co.wrap(function* (event, context, cb) {
+const handler = co.wrap(function* (event, context, cb) {
   let req = JSON.parse(event.body);
   log.debug(`request body is valid JSON`, { requestBody: event.body });
 
@@ -41,3 +44,6 @@ module.exports.handler = co.wrap(function* (event, context, cb) {
 
   cb(null, response);
 });
+
+module.exports.handler = middy(handler)
+  .use(sampleLogging({ sampleRate: 0.01 }));
