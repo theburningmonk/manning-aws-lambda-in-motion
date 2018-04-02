@@ -10,12 +10,18 @@ custom:
   logLevel:
     prod: WARN
     default: DEBUG
+  serverless-iam-roles-per-function:
+    defaultInherit: true
 
 provider:
   name: aws
   runtime: nodejs6.10
   environment:
     log_level: ${self:custom.logLevel.${self:custom.stage}, self:custom.logLevel.default}
+  iamRoleStatements:
+    - Effect: Allow
+      Action: cloudwatch:PutMetricData
+      Resource: '*'
 
 functions:
   get-index:

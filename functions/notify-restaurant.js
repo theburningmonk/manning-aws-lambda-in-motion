@@ -8,6 +8,7 @@ const log        = require('../lib/log');
 
 const middy         = require('middy');
 const sampleLogging = require('../middleware/sample-logging');
+const flushMetrics  = require('../middleware/flush-metrics');
 
 const handler = co.wrap(function* (event, context, cb) {
   let records = getRecords(event);
@@ -33,4 +34,5 @@ const handler = co.wrap(function* (event, context, cb) {
 });
 
 module.exports.handler = middy(handler)
-  .use(sampleLogging({ sampleRate: 0.01 }));
+  .use(sampleLogging({ sampleRate: 0.01 }))
+  .use(flushMetrics);

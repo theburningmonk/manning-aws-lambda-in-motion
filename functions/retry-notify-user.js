@@ -1,11 +1,13 @@
 'use strict';
 
-const co     = require('co');
-const notify = require('../lib/notify');
-const log    = require('../lib/log');
+const co         = require('co');
+const notify     = require('../lib/notify');
+const log        = require('../lib/log');
+const cloudwatch = require('../lib/cloudwatch');
 
 const middy         = require('middy');
 const sampleLogging = require('../middleware/sample-logging');
+const flushMetrics  = require('../middleware/flush-metrics');
 
 const handler = co.wrap(function* (event, context, cb) {
   let order = JSON.parse(event.Records[0].Sns.Message);
@@ -25,8 +27,11 @@ const handler = co.wrap(function* (event, context, cb) {
     log.warn('failed to notify user of accepted order', logContext, err);
 
     cb(err);
+  } finally {
+    cloudwatch.incrCount("NotifyUserRetried");
   }
 });
 
 module.exports.handler = middy(handler)
-  .use(sampleLogging({ sampleRate: 0.01 }));
+  .use(sampleLogging({ sampleRate: 0.01 }))
+  .use(flushMetrics);
