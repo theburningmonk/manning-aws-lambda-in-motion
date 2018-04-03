@@ -8,8 +8,6 @@ module.exports = {
     cloudwatch.flush().then(_ => next());
   },
   onError: (handler, next) => {
-    cloudwatch.clear();
-
-    next(handler.error);
+    cloudwatch.flush().then(_ => next(handler.error));
   }
 };
