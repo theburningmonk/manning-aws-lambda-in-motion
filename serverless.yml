@@ -35,6 +35,7 @@ functions:
       orders_api: https://8kbasri6v6.execute-api.us-east-1.amazonaws.com/dev/orders
       cognito_user_pool_id: us-east-1_DfuAwa0vB
       cognito_client_id: 1tf8pb1s1n53p7u608e7ic5ih8
+      async_metrics: true
     #iamRoleStatementsInherit: true #optionally inherit shared permissions
     iamRoleStatements:
       - Effect: Allow
@@ -50,6 +51,7 @@ functions:
           authorizer: aws_iam
     environment:
       restaurants_table: restaurants
+      async_metrics: true
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:scan
@@ -65,6 +67,7 @@ functions:
             arn: arn:aws:cognito-idp:#{AWS::Region}:#{AWS::AccountId}:userpool/us-east-1_DfuAwa0vB
     environment:
       restaurants_table: restaurants
+      async_metrics: true
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:scan
@@ -80,6 +83,7 @@ functions:
             arn: arn:aws:cognito-idp:#{AWS::Region}:#{AWS::AccountId}:userpool/us-east-1_DfuAwa0vB
     environment:
       order_events_stream: order-events
+      async_metrics: true
     iamRoleStatements:
       - Effect: Allow
         Action: kinesis:PutRecord
@@ -129,6 +133,7 @@ functions:
           method: post
     environment:
       order_events_stream: order-events
+      async_metrics: true
     iamRoleStatements:
       - Effect: Allow
         Action: kinesis:PutRecord
@@ -178,6 +183,7 @@ functions:
           method: post
     environment:
       order_events_stream: order-events
+      async_metrics: true
     iamRoleStatements:
       - Effect: Allow
         Action: kinesis:PutRecord

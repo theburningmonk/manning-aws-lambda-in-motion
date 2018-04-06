@@ -1,9 +1,10 @@
 'use strict';
 
-const co       = require('co');
-const AWS      = require('aws-sdk');
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-const log      = require('../lib/log');
+const co         = require('co');
+const AWS        = require('aws-sdk');
+const dynamodb   = new AWS.DynamoDB.DocumentClient();
+const log        = require('../lib/log');
+const cloudwatch = require('../lib/cloudwatch');
 
 const middy         = require('middy');
 const sampleLogging = require('../middleware/sample-logging');
@@ -19,7 +20,10 @@ function* findRestaurantsByTheme(theme, count) {
     ExpressionAttributeValues: { ":theme": theme }
   };
 
-  let resp = yield dynamodb.scan(req).promise();
+  let resp = yield cloudwatch.trackExecTime(
+    "DynamoDBScanLatency", 
+    () => dynamodb.scan(req).promise()
+  );
   return resp.Items;
 }
 
@@ -29,6 +33,8 @@ const handler = co.wrap(function* (event, context, cb) {
 
   let restaurants = yield findRestaurantsByTheme(req.theme, defaultResults);
   log.debug(`found ${restaurants.length} restaurants`);
+
+  cloudwatch.incrCount("RestaurantsFound", restaurants.length);
 
   let response = {
     statusCode: 200,
