@@ -72,6 +72,20 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "create-alarm",
+      "program": "${workspaceFolder}/node_modules/.bin/sls",
+      "args": [
+        "invoke",
+        "local",
+        "-f",
+        "auto-create-api-alarms",
+        "-p",
+        "examples/create-alarm.json"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "integration tests",
       "program": "${workspaceFolder}/node_modules/.bin/mocha",
       "env": {
@@ -99,6 +113,6 @@
         "--reporter",
         "spec"
       ]
-    },
+    },    
   ]
 }

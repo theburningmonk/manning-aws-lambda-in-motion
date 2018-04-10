@@ -1,0 +1,72 @@
+{
+  "version": "0",
+  "id": "dee9a69c-8166-1ad7-41d4-1dad201e29f6",
+  "detail-type": "AWS API Call via CloudTrail",
+  "source": "aws.apigateway",
+  "account": "374852340823",
+  "time": "2018-04-09T00:17:47Z",
+  "region": "us-east-1",
+  "resources": [],
+  "detail": {
+      "eventVersion": "1.05",
+      "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "AIDAIRMUZZEGPO27IPFYW",
+          "arn": "arn:aws:iam::374852340823:user/yan.cui",
+          "accountId": "374852340823",
+          "accessKeyId": "ASIAJNZDKN26DXPZFYQA",
+          "userName": "yan.cui",
+          "sessionContext": {
+              "attributes": {
+                  "mfaAuthenticated": "false",
+                  "creationDate": "2018-04-09T00:17:30Z"
+              }
+          },
+          "invokedBy": "cloudformation.amazonaws.com"
+      },
+      "eventTime": "2018-04-09T00:17:47Z",
+      "eventSource": "apigateway.amazonaws.com",
+      "eventName": "CreateDeployment",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "cloudformation.amazonaws.com",
+      "userAgent": "cloudformation.amazonaws.com",
+      "requestParameters": {
+          "restApiId": "8kbasri6v6",
+          "createDeploymentInput": {
+              "stageName": "dev"
+          },
+          "template": false
+      },
+      "responseElements": {
+          "id": "cj2y0f",
+          "createdDate": "Apr 9, 2018 12:17:47 AM",
+          "deploymentUpdate": {
+              "restApiId": "8kbasri6v6",
+              "deploymentId": "cj2y0f",
+              "template": false
+          },
+          "deploymentStages": {
+              "deploymentId": "cj2y0f",
+              "restApiId": "8kbasri6v6",
+              "template": false,
+              "templateSkipList": [
+                  "position"
+              ]
+          },
+          "deploymentDelete": {
+              "deploymentId": "cj2y0f",
+              "restApiId": "8kbasri6v6",
+              "template": false
+          },
+          "self": {
+              "deploymentId": "cj2y0f",
+              "restApiId": "8kbasri6v6",
+              "template": false
+          }
+      },
+      "requestID": "6e25bd56-3b8b-11e8-a351-e5e3d3161fe7",
+      "eventID": "a150d941-7a54-4572-97b2-0614a81fd25b",
+      "readOnly": false,
+      "eventType": "AwsApiCall"
+  }
+}
