@@ -10,6 +10,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "aws-xray-sdk": "^1.2.0",
         "bluebird": "^3.5.1",
         "chance": "^1.0.13",
         "co": "^4.6.0",
@@ -26,6 +27,7 @@
         "mocha": "^4.0.1",
         "serverless": "^1.24.1",
         "serverless-iam-roles-per-function": "^0.1.5",
+        "serverless-plugin-tracing": "^2.0.0",
         "serverless-pseudo-parameters": "^1.2.5",
         "serverless-sam": "0.0.3"
     }

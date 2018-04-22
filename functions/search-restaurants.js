@@ -1,7 +1,8 @@
 'use strict';
 
 const co         = require('co');
-const AWS        = require('aws-sdk');
+const AWSXRay    = require('aws-xray-sdk');
+const AWS        = AWSXRay.captureAWS(require('aws-sdk'));
 const dynamodb   = new AWS.DynamoDB.DocumentClient();
 const log        = require('../lib/log');
 const cloudwatch = require('../lib/cloudwatch');
