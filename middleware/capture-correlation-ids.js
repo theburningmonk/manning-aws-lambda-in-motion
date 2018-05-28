@@ -104,6 +104,37 @@ function captureKinesis(event, context, sampleDebugLogRate) {
   correlationIds.replaceAllWith({ awsRequestId });
 }
 
+function captureSns(records, awsRequestId, sampleDebugLogRate) {
+  let context = { awsRequestId };
+
+  const snsRecord = records[0].Sns;
+  const msgAttributes = snsRecord.MessageAttributes;
+  
+  for (var msgAttribute in msgAttributes) {
+    if (msgAttribute.toLowerCase().startsWith('x-correlation-')) {
+      context[msgAttribute] = msgAttributes[msgAttribute].Value;
+    }
+
+    if (msgAttribute === 'User-Agent') {
+      context['User-Agent'] = msgAttributes['User-Agent'].Value;
+    }
+
+    if (msgAttribute === 'Debug-Log-Enabled') {
+      context['Debug-Log-Enabled'] = msgAttributes['Debug-Log-Enabled'].Value;
+    }
+  }
+ 
+  if (!context['x-correlation-id']) {
+    context['x-correlation-id'] = awsRequestId;
+  }
+
+  if (!context['Debug-Log-Enabled']) {
+    context['Debug-Log-Enabled'] = Math.random() < sampleDebugLogRate ? 'true' : 'false';
+  }
+
+  correlationIds.replaceAllWith(context);
+}
+
 function isApiGatewayEvent(event) {
   return event.hasOwnProperty('httpMethod')
 }
@@ -120,6 +151,18 @@ function isKinesisEvent(event) {
   return event.Records[0].eventSource === 'aws:kinesis';
 }
 
+function isSnsEvent(event) {
+  if (!event.hasOwnProperty('Records')) {
+    return false;
+  }
+  
+  if (!Array.isArray(event.Records)) {
+    return false;
+  }
+
+  return event.Records[0].EventSource === 'aws:sns';
+}
+
 module.exports = (config) => {
   const sampleDebugLogRate = config.sampleDebugLogRate || 0.01;
 
@@ -131,6 +174,8 @@ module.exports = (config) => {
         captureHttp(handler.event.headers, handler.context.awsRequestId, sampleDebugLogRate);
       } else if (isKinesisEvent(handler.event)) {
         captureKinesis(handler.event, handler.context, sampleDebugLogRate);
+      } else if (isSnsEvent(handler.event)) {
+        captureSns(handler.event.Records, handler.context.awsRequestId, sampleDebugLogRate);
       }
 
       next()
