@@ -21,6 +21,10 @@ const handler = co.wrap(function* (event, context, cb) {
 
   log.debug('restaurant has fulfilled order', { orderId, restaurantName, userEmail });
 
+  correlationIds.set('order-id', orderId);
+  correlationIds.set('restaurant-name', restaurantName);
+  correlationIds.set('user-email', userEmail);
+
   let data = {
     orderId,
     userEmail,
