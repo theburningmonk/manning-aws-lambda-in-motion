@@ -23,14 +23,15 @@
         "local",
         "-f",
         "get-index",
-        "-d",
-        "{}"
+        "-p",
+        "examples/get-index.json"
       ],
       "env": {
         "restaurants_api": "https://8kbasri6v6.execute-api.us-east-1.amazonaws.com/dev/restaurants",
         "cognito_user_pool_id": "us-east-1_DfuAwa0vB",
         "cognito_client_id": "49lunjf7j7vsgmq9lhtfn4q7ma",
-        "SLS_DEBUG": "*"
+        "SLS_DEBUG": "*",
+        "AWS_XRAY_CONTEXT_MISSING":"LOG_ERROR"
       }
     },
     {
@@ -48,7 +49,8 @@
       ],
       "env": {
         "restaurants_table": "restaurants",
-        "SLS_DEBUG": "*"
+        "SLS_DEBUG": "*",
+        "AWS_XRAY_CONTEXT_MISSING":"LOG_ERROR"
       }
     },
     {
@@ -66,7 +68,8 @@
       ],
       "env": {
         "restaurants_table": "restaurants",
-        "SLS_DEBUG": "*"
+        "SLS_DEBUG": "*",
+        "AWS_XRAY_CONTEXT_MISSING":"LOG_ERROR"
       }
     },
     {
