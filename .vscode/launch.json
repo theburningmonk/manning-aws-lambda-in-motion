@@ -89,6 +89,23 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "notify-restaurant",
+      "program": "${workspaceFolder}/node_modules/.bin/sls",
+      "args": [
+        "invoke",
+        "local",
+        "-f",
+        "notify-restaurant",
+        "-p",
+        "examples/notify-restaurant.json"
+      ],
+      "env": {
+        "AWS_XRAY_CONTEXT_MISSING":"LOG_ERROR"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "integration tests",
       "program": "${workspaceFolder}/node_modules/.bin/mocha",
       "env": {

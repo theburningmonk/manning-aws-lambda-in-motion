@@ -1,14 +1,13 @@
 'use strict';
 
 const co         = require('co');
-const AWSXRay    = require('aws-xray-sdk');
-const AWS        = AWSXRay.captureAWS(require('aws-sdk'));
-const kinesis    = new AWS.Kinesis();
+const kinesis    = require('../lib/kinesis');
 const log        = require('../lib/log');
 const cloudwatch = require('../lib/cloudwatch');
 
 const middy         = require('middy');
 const sampleLogging = require('../middleware/sample-logging');
+const captureCorrelationIds = require('../middleware/capture-correlation-ids');
 
 const streamName = process.env.order_events_stream;
 
@@ -51,4 +50,5 @@ const handler = co.wrap(function* (event, context, cb) {
 });
 
 module.exports.handler = middy(handler)
+  .use(captureCorrelationIds({ sampleDebugLogRate: 0.01 }))
   .use(sampleLogging({ sampleRate: 0.01 }));

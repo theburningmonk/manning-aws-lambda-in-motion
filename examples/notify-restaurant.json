@@ -1,0 +1,20 @@
+{
+  "Records":[
+    {
+      "kinesis": {
+        "kinesisSchemaVersion":"1.0",
+        "partitionKey":"e4a5eae6-19f7-5284-9cb5-f97d94518e34",
+        "sequenceNumber":"49584583598311915935008171659389880270421244691116720130",
+        "data":"eyJvcmRlcklkIjoiZTRhNWVhZTYtMTlmNy01Mjg0LTljYjUtZjk3ZDk0NTE4ZTM0IiwidXNlckVtYWlsIjoidGhlYnVybmluZ21vbmtAZ21haWwuY29tIiwicmVzdGF1cmFudE5hbWUiOiJGYW5ndGFzaWEiLCJldmVudFR5cGUiOiJvcmRlcl9wbGFjZWQifQ==",
+        "approximateArrivalTimestamp":1527507873.753
+      },
+      "eventSource":"aws:kinesis",
+      "eventVersion":"1.0",
+      "eventID":"shardId-000000000000:49584583598311915935008171659389880270421244691116720130",
+      "eventName":"aws:kinesis:record",
+      "invokeIdentityArn":"arn:aws:iam::374852340823:role/big-mouth-dev-notify-restaurant-us-east-1-lambdaRole",
+      "awsRegion":"us-east-1",
+      "eventSourceARN":"arn:aws:kinesis:us-east-1:374852340823:stream/order-events"
+    }
+  ]
+}
