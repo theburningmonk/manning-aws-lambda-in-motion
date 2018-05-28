@@ -49,16 +49,22 @@ function* getRestaurants() {
   
   return new Promise((resolve, reject) => {
     let f = co.wrap(function* (subsegment) {
-      subsegment.addMetadata('url', restaurantsApiRoot);
+      if (subsegment) {
+        subsegment.addMetadata('url', restaurantsApiRoot);  
+      }
 
       try {
         let body = (yield httpReq).body;
-        subsegment.close();
+        if (subsegment) {
+          subsegment.close();
+        }
         resolve(body);
       } catch (err) {
-        subsegment.close(err);
+        if (subsegment) {
+          subsegment.close(err);
+        }
         reject(err);
-      }      
+      }
     });
 
     // the current sub/segment
