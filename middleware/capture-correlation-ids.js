@@ -60,7 +60,10 @@ function captureKinesis(event, context, sampleDebugLogRate) {
         recordContext['Debug-Log-Enabled'] = Math.random() < sampleDebugLogRate ? 'true' : 'false';
       }
 
+      let debugLog = recordContext['Debug-Log-Enabled'] === 'true';
+
       let oldContext = undefined;
+      let debugLogRollback = undefined;
 
       // lets you add more correlation IDs for just this record
       record.addToScope = (key, value) => {
@@ -77,11 +80,19 @@ function captureKinesis(event, context, sampleDebugLogRate) {
           oldContext = correlationIds.get();
           correlationIds.replaceAllWith(recordContext);
         }
+
+        if (debugLog) {
+          debugLogRollback = log.enableDebug();
+        }
       };
 
       record.unscope = () => {
         if (oldContext) {
           correlationIds.replaceAllWith(oldContext);
+        }
+
+        if (debugLogRollback) {
+          debugLogRollback();
         }
       }
 
