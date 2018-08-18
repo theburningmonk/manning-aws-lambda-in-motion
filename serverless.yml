@@ -41,10 +41,10 @@ functions:
           path: /
           method: get
     environment:
-      restaurants_api: https://8kbasri6v6.execute-api.us-east-1.amazonaws.com/dev/restaurants
-      orders_api: https://8kbasri6v6.execute-api.us-east-1.amazonaws.com/dev/orders
-      cognito_user_pool_id: us-east-1_DfuAwa0vB
-      cognito_client_id: 1tf8pb1s1n53p7u608e7ic5ih8
+      restaurants_api: ${ssm:/bigmouth/${self:custom.stage}/restaurants_api}
+      orders_api: ${ssm:/bigmouth/${self:custom.stage}/order_api}
+      cognito_user_pool_id: ${ssm:/bigmouth/${self:custom.stage}/cognito_user_pool_id}
+      cognito_client_id: ${ssm:/bigmouth/${self:custom.stage}/cognito_client_id}
       async_metrics: true
     #iamRoleStatementsInherit: true #optionally inherit shared permissions
     iamRoleStatements:
