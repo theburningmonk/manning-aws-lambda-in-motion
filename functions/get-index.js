@@ -115,6 +115,7 @@ module.exports.handler = middy(handler)
   .use(sampleLogging({ sampleRate: 0.01 }))
   .use(ssm({
     cache: true,
+    cacheExpiryInMillis: 3 * 60 * 1000, // 3 mins
     names: {
       restaurants_api: `/bigmouth/${STAGE}/restaurants_api`,
       orders_api: `/bigmouth/${STAGE}/orders_api`,
