@@ -50,9 +50,6 @@ functions:
       - Effect: Allow
         Action: ssm:GetParameters*
         Resource: arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/bigmouth/${self:custom.stage}/*
-      - Effect: Allow
-        Action: kms:Decrypt
-        Resource: arn:aws:kms:#{AWS::Region}:#{AWS::AccountId}:key/alias/aws/ssm2
 
   get-restaurants:
     handler: functions/get-restaurants.handler
