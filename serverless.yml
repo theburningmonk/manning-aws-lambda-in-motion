@@ -40,17 +40,19 @@ functions:
       - http:
           path: /
           method: get
-    environment:
-      restaurants_api: ${ssm:/bigmouth/${self:custom.stage}/restaurants_api}
-      orders_api: ${ssm:/bigmouth/${self:custom.stage}/orders_api}
-      cognito_user_pool_id: ${ssm:/bigmouth/${self:custom.stage}/cognito_user_pool_id}
-      cognito_client_id: ${ssm:/bigmouth/${self:custom.stage}/cognito_client_id~true}
+    environment:      
       async_metrics: true
     #iamRoleStatementsInherit: true #optionally inherit shared permissions
     iamRoleStatements:
       - Effect: Allow
         Action: execute-api:Invoke
         Resource: arn:aws:execute-api:#{AWS::Region}:#{AWS::AccountId}:*/*/GET/restaurants
+      - Effect: Allow
+        Action: ssm:GetParameters*
+        Resource: arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/bigmouth/${self:custom.stage}/*
+      - Effect: Allow
+        Action: kms:Decrypt
+        Resource: arn:aws:kms:#{AWS::Region}:#{AWS::AccountId}:key/alias/aws/ssm2
 
   get-restaurants:
     handler: functions/get-restaurants.handler
