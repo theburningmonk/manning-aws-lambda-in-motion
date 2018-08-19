@@ -44,7 +44,7 @@ functions:
       restaurants_api: ${ssm:/bigmouth/${self:custom.stage}/restaurants_api}
       orders_api: ${ssm:/bigmouth/${self:custom.stage}/order_api}
       cognito_user_pool_id: ${ssm:/bigmouth/${self:custom.stage}/cognito_user_pool_id}
-      cognito_client_id: ${ssm:/bigmouth/${self:custom.stage}/cognito_client_id}
+      cognito_client_id: ${ssm:/bigmouth/${self:custom.stage}/cognito_client_id~true}
       async_metrics: true
     #iamRoleStatementsInherit: true #optionally inherit shared permissions
     iamRoleStatements:
