@@ -31,8 +31,8 @@ function* loadHtml() {
   return html;
 }
 
-function* getRestaurants() {
-  let url = URL.parse(process.env.restaurants_api);
+function* getRestaurants(restaurantsApiUrl) {
+  let url = URL.parse(restaurantsApiUrl);
   let opts = {
     host: url.hostname,
     path: url.pathname
@@ -41,14 +41,14 @@ function* getRestaurants() {
   aws4.sign(opts);
 
   let httpReq = http({
-    uri: process.env.restaurants_api,
+    uri: restaurantsApiUrl,
     headers: opts.headers
   });
   
   return new Promise((resolve, reject) => {
     let f = co.wrap(function* (subsegment) {
       if (subsegment) {
-        subsegment.addMetadata('url', process.env.restaurants_api);  
+        subsegment.addMetadata('url', restaurantsApiUrl);
       }
 
       try {
@@ -80,7 +80,7 @@ const handler = co.wrap(function* (event, context, callback) {
 
   let restaurants = yield cloudwatch.trackExecTime(
     "GetRestaurantsLatency",
-    () => getRestaurants()
+    () => getRestaurants(context.restaurants_api)
   );
   log.debug(`loaded ${restaurants.length} restaurants`);
 
@@ -89,10 +89,10 @@ const handler = co.wrap(function* (event, context, callback) {
     dayOfWeek, 
     restaurants,
     awsRegion,
-    cognitoUserPoolId: process.env.cognito_user_pool_id,
-    cognitoClientId: process.env.cognito_client_id,
-    searchUrl: `${process.env.restaurants_api}/search`,
-    placeOrderUrl: `${process.env.orders_api}`
+    cognitoUserPoolId: context.cognito_user_pool_id,
+    cognitoClientId: context.cognito_client_id,
+    searchUrl: `${context.restaurants_api}/search`,
+    placeOrderUrl: `${context.orders_api}`
   };
   let html = Mustache.render(template, view);
   log.debug(`rendered HTML [${html.length} bytes]`);
@@ -116,6 +116,7 @@ module.exports.handler = middy(handler)
   .use(ssm({
     cache: true,
     cacheExpiryInMillis: 3 * 60 * 1000, // 3 mins
+    setToContext: true,
     names: {
       restaurants_api: `/bigmouth/${STAGE}/restaurants_api`,
       orders_api: `/bigmouth/${STAGE}/orders_api`,
