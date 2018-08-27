@@ -12,7 +12,7 @@ const cloudwatch = require('../lib/cloudwatch');
 const AWSXRay    = require('aws-xray-sdk');
 
 const middy         = require('middy');
-const { ssm }       = require('middy/middlewares');
+const { ssm, secretsManager } = require('middy/middlewares');
 const sampleLogging = require('../middleware/sample-logging');
 const captureCorrelationIds = require('../middleware/capture-correlation-ids');
 
@@ -89,8 +89,8 @@ const handler = co.wrap(function* (event, context, callback) {
     dayOfWeek, 
     restaurants,
     awsRegion,
-    cognitoUserPoolId: context.cognito_user_pool_id,
-    cognitoClientId: context.cognito_client_id,
+    cognitoUserPoolId: context.cognito.user_pool_id,
+    cognitoClientId: context.cognito.client_id,
     searchUrl: `${context.restaurants_api}/search`,
     placeOrderUrl: `${context.orders_api}`
   };
@@ -119,8 +119,13 @@ module.exports.handler = middy(handler)
     setToContext: true,
     names: {
       restaurants_api: `/bigmouth/${STAGE}/restaurants_api`,
-      orders_api: `/bigmouth/${STAGE}/orders_api`,
-      cognito_user_pool_id: `/bigmouth/${STAGE}/cognito_user_pool_id`,
-      cognito_client_id: `/bigmouth/${STAGE}/cognito_client_id`
+      orders_api: `/bigmouth/${STAGE}/orders_api`
+    }
+  }))
+  .use(secretsManager({
+    cache: true,
+    cacheExpiryInMillis: 3 * 60 * 1000, // 3 mins
+    secrets: {
+      cognito: `/bigmouth/${STAGE}/cognito`
     }
   }));

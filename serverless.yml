@@ -50,6 +50,9 @@ functions:
       - Effect: Allow
         Action: ssm:GetParameters*
         Resource: arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/bigmouth/${self:custom.stage}/*
+      - Effect: Allow
+        Action: secretsmanager:GetSecretValue
+        Resource: arn:aws:secretsmanager:#{AWS::Region}:#{AWS::AccountId}:secret:/bigmouth/${self:custom.stage}/*
 
   get-restaurants:
     handler: functions/get-restaurants.handler
