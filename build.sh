@@ -22,11 +22,12 @@ elif [ "$1" = "acceptance-test" ] && [ $# -eq 1 ]; then
   npm install
 
   npm run acceptance-test
-elif [ "$1" = "deploy" ] && [ $# -eq 2 ]; then
+elif [ "$1" = "deploy" ] && [ $# -eq 3 ]; then
   STAGE=$2
+  REGION=$3
 
   npm install
-  'node_modules/.bin/sls' deploy -s $STAGE
+  'node_modules/.bin/sls' deploy -s $STAGE -r $REGION
 else
   instruction
   exit 1

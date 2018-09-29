@@ -5,14 +5,25 @@ plugins:
   - serverless-sam
   - serverless-iam-roles-per-function
   - serverless-plugin-tracing
+  - serverless-vpc-discovery
 
 custom: 
   stage: ${opt:stage, self:provider.stage}
+  region: ${opt:region}
   logLevel:
     prod: WARN
     default: DEBUG
   serverless-iam-roles-per-function:
     defaultInherit: true
+  vpc:
+    vpcName: vpc_${self:custom.stage}
+    subnetNames:
+      - vpc_${self:custom.stage}.${self:custom.region}a
+      - vpc_${self:custom.stage}.${self:custom.region}c
+      - vpc_${self:custom.stage}.${self:custom.region}d
+      - vpc_${self:custom.stage}.${self:custom.region}e
+    securityGroupNames:
+      - vpc_${self:custom.stage}_sg
 
 provider:
   name: aws

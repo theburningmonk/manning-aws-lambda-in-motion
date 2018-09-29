@@ -29,6 +29,7 @@
         "serverless-iam-roles-per-function": "^0.1.5",
         "serverless-plugin-tracing": "^2.0.0",
         "serverless-pseudo-parameters": "^1.2.5",
-        "serverless-sam": "0.0.3"
+        "serverless-sam": "0.0.3",
+        "serverless-vpc-discovery": "^1.0.12"
     }
 }
