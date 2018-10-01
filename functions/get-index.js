@@ -10,11 +10,8 @@ const aws4       = require('../lib/aws4');
 const log        = require('../lib/log');
 const cloudwatch = require('../lib/cloudwatch');
 const AWSXRay    = require('aws-xray-sdk');
-
-const middy         = require('middy');
+const wrapper    = require('../middleware/wrapper');
 const { ssm, secretsManager } = require('middy/middlewares');
-const sampleLogging = require('../middleware/sample-logging');
-const captureCorrelationIds = require('../middleware/capture-correlation-ids');
 
 const STAGE     = process.env.STAGE;
 const awsRegion = process.env.AWS_REGION;
@@ -99,6 +96,8 @@ const handler = co.wrap(function* (event, context, callback) {
 
   cloudwatch.incrCount('RestaurantsReturned', restaurants.length);
 
+  yield http({ uri: 'http://google.com' });
+
   const response = {
     statusCode: 200,
     body: html,
@@ -110,9 +109,7 @@ const handler = co.wrap(function* (event, context, callback) {
   callback(null, response);
 });
 
-module.exports.handler = middy(handler)
-  .use(captureCorrelationIds({ sampleDebugLogRate: 0.01 }))
-  .use(sampleLogging({ sampleRate: 0.01 }))
+module.exports.handler = wrapper(handler)
   .use(ssm({
     cache: true,
     cacheExpiryInMillis: 3 * 60 * 1000, // 3 mins

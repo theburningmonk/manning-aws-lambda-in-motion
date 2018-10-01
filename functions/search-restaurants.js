@@ -6,9 +6,7 @@ const AWS        = AWSXRay.captureAWS(require('aws-sdk'));
 const dynamodb   = new AWS.DynamoDB.DocumentClient();
 const log        = require('../lib/log');
 const cloudwatch = require('../lib/cloudwatch');
-
-const middy         = require('middy');
-const sampleLogging = require('../middleware/sample-logging');
+const wrapper    = require('../middleware/wrapper');
 
 const defaultResults = process.env.defaultResults || 8;
 const tableName      = process.env.restaurants_table;
@@ -45,5 +43,4 @@ const handler = co.wrap(function* (event, context, cb) {
   cb(null, response);
 });
 
-module.exports.handler = middy(handler)
-  .use(sampleLogging({ sampleRate: 0.01 }));
+module.exports.handler = wrapper(handler);
