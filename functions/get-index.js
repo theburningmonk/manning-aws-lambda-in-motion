@@ -96,8 +96,6 @@ const handler = co.wrap(function* (event, context, callback) {
 
   cloudwatch.incrCount('RestaurantsReturned', restaurants.length);
 
-  yield http({ uri: 'http://google.com' });
-
   const response = {
     statusCode: 200,
     body: html,

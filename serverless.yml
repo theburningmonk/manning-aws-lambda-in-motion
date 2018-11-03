@@ -5,6 +5,7 @@ plugins:
   - serverless-sam
   - serverless-iam-roles-per-function
   - serverless-plugin-tracing
+  - serverless-plugin-canary-deployments
 
 custom: 
   stage: ${opt:stage, self:provider.stage}
@@ -18,7 +19,6 @@ custom:
 provider:
   name: aws
   runtime: nodejs6.10
-  versionFunctions: false
   tracing: true
   environment:
     log_level: ${self:custom.logLevel.${self:custom.stage}, self:custom.logLevel.default}
@@ -28,12 +28,14 @@ provider:
     - Effect: Allow
       Action: cloudwatch:PutMetricData
       Resource: '*'
-    - Effect: "Allow"
+    - Effect: Allow
       Action:
-        - "xray:PutTraceSegments"
-        - "xray:PutTelemetryRecords"
-      Resource:
-        - "*"
+        - 'xray:PutTraceSegments'
+        - 'xray:PutTelemetryRecords'
+      Resource: '*'
+    - Effect: Allow
+      Action: codedeploy:*
+      Resource: '*'
 
 functions:
   get-index:
@@ -44,6 +46,9 @@ functions:
           method: get
     environment:      
       async_metrics: true
+    deploymentSettings:
+      type: Canary10Percent5Minutes
+      alias: Live
     #iamRoleStatementsInherit: true #optionally inherit shared permissions
     iamRoleStatements:
       - Effect: Allow
