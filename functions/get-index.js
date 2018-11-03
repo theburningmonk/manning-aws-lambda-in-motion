@@ -94,6 +94,9 @@ const handler = co.wrap(function* (event, context, callback) {
   let html = Mustache.render(template, view);
   log.debug(`rendered HTML [${html.length} bytes]`);
 
+  // uncomment this to cause function to err
+  // yield http({ uri: 'https://theburningmonk.com' });
+
   cloudwatch.incrCount('RestaurantsReturned', restaurants.length);
 
   const response = {
