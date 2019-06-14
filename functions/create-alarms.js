@@ -1,80 +1,77 @@
-'use strict';
+const _ = require('lodash')
+const AWS = require('aws-sdk')
+const apigateway = new AWS.APIGateway()
+const cloudwatch = new AWS.CloudWatch()
+const log = require('../lib/log')
 
-const _          = require('lodash');
-const co         = require('co');
-const AWS        = require('aws-sdk');
-const apigateway = new AWS.APIGateway();
-const cloudwatch = new AWS.CloudWatch();
-const log        = require('../lib/log');
+const alarmActions = (process.env.alarm_actions || '').split(',')
+const okAction = (process.env.ok_actions || '').split(',')
 
-const alarmActions = (process.env.alarm_actions || '').split(',');
-const okAction     = (process.env.ok_actions || '').split(',');
+async function enableDetailedMetrics(restApiId, stageName) {
+  let getResp = await apigateway.getStage({ restApiId, stageName }).promise()
+  log.debug('get stage settings', getResp.methodSettings)
 
-let enableDetailedMetrics = co.wrap(function* (restApiId, stageName) {
-  let getResp = yield apigateway.getStage({ restApiId, stageName }).promise();
-  log.debug('get stage settings', getResp.methodSettings);
-
-  let isDetailedMetricsEnabled = _.get(getResp, 'methodSettings.*/*.metricsEnabled', false);
+  let isDetailedMetricsEnabled = _.get(getResp, 'methodSettings.*/*.metricsEnabled', false)
   if (isDetailedMetricsEnabled) {
-    log.debug('detailed metrics already enabled', { restApiId, stageName });
+    log.debug('detailed metrics already enabled', { restApiId, stageName })
   } else {
     let updateReq = {
       restApiId,
       stageName,
       patchOperations: [
         {
-          path: "/*/*/metrics/enabled",
-          value: "true",
-          op: "replace"
+          path: '/*/*/metrics/enabled',
+          value: 'true',
+          op: 'replace'
         }
       ]
-    };
-    yield apigateway.updateStage(updateReq).promise();
-    log.debug('enabled detailed metrics', { restApiId, stageName });
+    }
+    await apigateway.updateStage(updateReq).promise()
+    log.debug('enabled detailed metrics', { restApiId, stageName })
   }
-});
+}
 
-let getRestEndpoints = co.wrap(function* (restApiId) {
-  let resp = yield apigateway.getResources({ restApiId }).promise();
-  log.debug('got REST resources', { restApiId });
+async function getRestEndpoints(restApiId) {
+  let resp = await apigateway.getResources({ restApiId }).promise()
+  log.debug('got REST resources', { restApiId })
 
   let resourceMethods = resp.items.map(x => {
-    let methods = _.keys(x.resourceMethods);
-    return methods.map(method => ({ resource: x.path, method }));
-  });
+    let methods = _.keys(x.resourceMethods)
+    return methods.map(method => ({ resource: x.path, method }))
+  })
 
-  return _.flattenDeep(resourceMethods);
-});
+  return _.flattenDeep(resourceMethods)
+}
 
-let getRestApiName = co.wrap(function* (restApiId) {
-  let resp = yield apigateway.getRestApi({ restApiId }).promise();
-  log.debug('got REST api', { restApiId });
+async function getRestApiName(restApiId) {
+  let resp = await apigateway.getRestApi({ restApiId }).promise()
+  log.debug('got REST api', { restApiId })
 
-  return resp.name;
-});
+  return resp.name
+}
 
-let createAlarmsForEndpoints = co.wrap(function* (restApiId, stageName) {
-  let apiName = yield getRestApiName(restApiId);
-  log.debug(`API name is ${apiName}`, { restApiId, stageName });
+async function createAlarmsForEndpoints(restApiId, stageName) {
+  let apiName = await getRestApiName(restApiId)
+  log.debug(`API name is ${apiName}`, { restApiId, stageName })
 
-  let restEndpoints = yield getRestEndpoints(restApiId);
-  log.debug('got REST endpoints', { restApiId, stageName, restEndpoints });
+  let restEndpoints = await getRestEndpoints(restApiId)
+  log.debug('got REST endpoints', { restApiId, stageName, restEndpoints })
 
   for (let endpoint of restEndpoints) {
     let putReq = {
       AlarmName: `API [${apiName}] stage [${stageName}] ${endpoint.method} ${endpoint.resource} : p99 > 1s`,
       MetricName: 'Latency',
       Dimensions: [
-        { Name: 'ApiName',  Value: apiName },
+        { Name: 'ApiName', Value: apiName },
         { Name: 'Resource', Value: endpoint.resource },
-        { Name: 'Method',   Value: endpoint.method },
-        { Name: 'Stage',    Value: stageName }
+        { Name: 'Method', Value: endpoint.method },
+        { Name: 'Stage', Value: stageName }
       ],
       Namespace: 'AWS/ApiGateway',
-      Threshold: 1000,      // 1s
-      ComparisonOperator: 'GreaterThanThreshold',      
-      Period: 60,           // per min
-      EvaluationPeriods: 5, 
+      Threshold: 1000, // 1s
+      ComparisonOperator: 'GreaterThanThreshold',
+      Period: 60, // per min
+      EvaluationPeriods: 5,
       DatapointsToAlarm: 5, // 5 consecutive mins to trigger alarm
       ExtendedStatistic: 'p99',
       ActionsEnabled: true,
@@ -82,20 +79,20 @@ let createAlarmsForEndpoints = co.wrap(function* (restApiId, stageName) {
       AlarmDescription: `auto-generated by Lambda [${process.env.AWS_LAMBDA_FUNCTION_NAME}]`,
       OKActions: okAction,
       Unit: 'Milliseconds'
-    };
-    yield cloudwatch.putMetricAlarm(putReq).promise();
+    }
+    await cloudwatch.putMetricAlarm(putReq).promise()
   }
 
-  log.debug('auto-created latency ALARMS for REST endpoints', { restApiId, stageName, restEndpoints });
-});
+  log.debug('auto-created latency ALARMS for REST endpoints', { restApiId, stageName, restEndpoints })
+}
 
-module.exports.handler = co.wrap(function* (event, context, cb) {
-  let restApiId = event.detail.requestParameters.restApiId;
-  let stageName = event.detail.requestParameters.createDeploymentInput.stageName;
+module.exports.handler = async (event, context, cb) => {
+  let restApiId = event.detail.requestParameters.restApiId
+  let stageName = event.detail.requestParameters.createDeploymentInput.stageName
 
-  yield enableDetailedMetrics(restApiId, stageName);
+  await enableDetailedMetrics(restApiId, stageName)
 
-  yield createAlarmsForEndpoints(restApiId, stageName);
+  await createAlarmsForEndpoints(restApiId, stageName)
 
-  cb(null, 'ok');
-});
+  return 'ok'
+}

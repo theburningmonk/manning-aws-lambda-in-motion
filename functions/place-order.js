@@ -1,41 +1,36 @@
-'use strict';
+const _ = require('lodash')
+const kinesis = require('../lib/kinesis')
+const chance = require('chance').Chance()
+const log = require('../lib/log')
+const cloudwatch = require('../lib/cloudwatch')
+const correlationIds = require('../lib/correlation-ids')
+const wrapper = require('../middleware/wrapper')
 
-const _              = require('lodash');
-const co             = require('co');
-const kinesis        = require('../lib/kinesis');
-const chance         = require('chance').Chance();
-const log            = require('../lib/log');
-const cloudwatch     = require('../lib/cloudwatch');
-const correlationIds = require('../lib/correlation-ids');
-const wrapper        = require('../middleware/wrapper');
-
-const streamName = process.env.order_events_stream;
+const streamName = process.env.order_events_stream
 
 const UNAUTHORIZED = {
   statusCode: 401,
-  body: "unauthorized"
+  body: 'unauthorized'
 }
 
-const handler = co.wrap(function* (event, context, cb) {
-  let req = JSON.parse(event.body);
-  log.debug(`request body is valid JSON`, { requestBody: event.body });
+const handler = async (event, context, cb) => {
+  let req = JSON.parse(event.body)
+  log.debug(`request body is valid JSON`, { requestBody: event.body })
 
-  let userEmail = _.get(event, 'requestContext.authorizer.claims.email');
+  let userEmail = _.get(event, 'requestContext.authorizer.claims.email')
   if (!userEmail) {
-    cb(null, UNAUTHORIZED);
-    log.error('unauthorized request, user email is not provided');
-
-    return;
+    log.error('unauthorized request, user email is not provided')
+    return UNAUTHORIZED
   }
 
-  let restaurantName = req.restaurantName;
-  let orderId = chance.guid();
+  let restaurantName = req.restaurantName
+  let orderId = chance.guid()
 
-  correlationIds.set('order-id', orderId);
-  correlationIds.set('restaurant-name', restaurantName);
-  correlationIds.set('user-email', userEmail);
+  correlationIds.set('order-id', orderId)
+  correlationIds.set('restaurant-name', restaurantName)
+  correlationIds.set('user-email', userEmail)
 
-  log.debug(`placing order...`, { orderId, restaurantName, userEmail });
+  log.debug(`placing order...`, { orderId, restaurantName, userEmail })
 
   let data = {
     orderId,
@@ -48,21 +43,21 @@ const handler = co.wrap(function* (event, context, cb) {
     Data: JSON.stringify(data), // the SDK would base64 encode this for us
     PartitionKey: orderId,
     StreamName: streamName
-  };
+  }
 
-  yield cloudwatch.trackExecTime(
-    "KinesisPutRecordLatency",
+  await cloudwatch.trackExecTime(
+    'KinesisPutRecordLatency',
     () => kinesis.putRecord(kinesisReq).promise()
-  );
+  )
 
-  log.debug(`published event into Kinesis`, { eventName: 'order_placed' });
+  log.debug(`published event into Kinesis`, { eventName: 'order_placed' })
 
   let response = {
     statusCode: 200,
     body: JSON.stringify({ orderId })
   }
 
-  cb(null, response);
-});
+  return response
+}
 
-module.exports.handler = wrapper(handler);
+module.exports.handler = wrapper(handler)
