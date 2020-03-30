@@ -19,6 +19,9 @@ let an_authenticated_user = function* () {
   let username  = `test-${firstName}-${lastName}-${chance.string({length: 8})}`;
   let password  = random_password();
   let email     = `${firstName}-${lastName}@big-mouth.com`;
+  
+  username = username.replace(' ', '').replace('@', '');
+  email = email.replace(' ', '');
 
   let createReq = {
     UserPoolId        : userpoolId,
